@@ -1,0 +1,64 @@
+{
+  "name": "use-responsivevalue",
+  "version": "0.0.0-development",
+  "license": "MIT",
+  "author": "Vladislav Shkodin",
+  "description": "React hook to deal with responsive values",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/smashercosmo/use-responsivevalue.git"
+  },
+  "main": "dist/index.js",
+  "module": "dist/use-responsivevalue.esm.js",
+  "typings": "dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "start": "tsdx watch",
+    "build": "tsdx build",
+    "test": "tsdx test --env=jsdom",
+    "lint": "tsdx lint",
+    "commit": "git-cz",
+    "semantic-release": "semantic-release"
+  },
+  "peerDependencies": {
+    "react": ">=16.8.0"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "tsdx lint"
+    }
+  },
+  "prettier": {
+    "semi": false,
+    "singleQuote": true,
+    "trailingComma": "all",
+    "bracketSpacing": true,
+    "jsxBracketSameLine": true
+  },
+  "devDependencies": {
+    "@testing-library/react-hooks": "3.2.1",
+    "@types/jest": "24.0.23",
+    "@types/jsdom": "12.2.4",
+    "@types/react": "16.9.11",
+    "@types/react-dom": "16.9.4",
+    "commitizen": "4.0.3",
+    "cz-conventional-changelog": "^3.0.2",
+    "husky": "3.0.9",
+    "mq-polyfill": "1.1.8",
+    "react": "16.12.0",
+    "react-dom": "16.12.0",
+    "react-test-renderer": "16.12.0",
+    "semantic-release": "^15.13.30",
+    "semantic-release-cli": "5.2.3",
+    "tsdx": "0.11.0",
+    "tslib": "1.10.0",
+    "typescript": "3.7.2"
+  },
+  "config": {
+    "commitizen": {
+      "path": "./node_modules/cz-conventional-changelog"
+    }
+  }
+}
