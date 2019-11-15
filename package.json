@@ -6,7 +6,7 @@
   "description": "React hook to deal with responsive values",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/smashercosmo/use-responsivevalue.git"
+    "url": "https://github.com/smashercosmo/use-responsivevalue.git"
   },
   "main": "dist/index.js",
   "module": "dist/use-responsivevalue.esm.js",
