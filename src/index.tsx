@@ -4,6 +4,9 @@ const WHITE_SPACE_REGEXP = /\s+/g
 const WIDTH_REGEXP = /(\d+)px/
 const MEDIA_QUERY_REGEXP = /^\((?:min|max)-width:\d+px\)/
 
+type MediaQueryValuePairs = (readonly [string, string])[]
+type MediaQueryListValuePairs = (readonly [MediaQueryList, string])[]
+
 /**
  * Sorts mediaQueryValuePairs from largest to smallest
  *
@@ -14,7 +17,7 @@ const MEDIA_QUERY_REGEXP = /^\((?:min|max)-width:\d+px\)/
 function sortMediaQueryValuePairs(
   mediaQueryValuePair1: string,
   mediaQueryValuePair2: string,
-) {
+): number {
   const mediaQuery1Match = mediaQueryValuePair1.match(WIDTH_REGEXP)
   const mediaQuery2Match = mediaQueryValuePair2.match(WIDTH_REGEXP)
   const width1 = mediaQuery1Match ? mediaQuery1Match[1] : 0
@@ -28,7 +31,7 @@ function sortMediaQueryValuePairs(
  * @param {string} mediaExpression ( e.g. '(min-width: 480px) 2, (min-width: 720px) 3, 1' )
  * @returns {[string, string][]} parsed expression ( e.g. [['(min-width: 480px)', '2'], ['(min-width: 720px)', '3'], ['all', '1']] )
  */
-function parseMediaExpression(mediaExpression: string) {
+function parseMediaExpression(mediaExpression: string): MediaQueryValuePairs {
   return mediaExpression
     .trim()
     .replace(WHITE_SPACE_REGEXP, '')
@@ -51,8 +54,8 @@ function parseMediaExpression(mediaExpression: string) {
  * @returns {[MediaQueryList, string][]}
  */
 function createMediaQueryListValuePairs(
-  mediaQueryValuePairs: (readonly [string, string])[],
-) {
+  mediaQueryValuePairs: MediaQueryValuePairs,
+): MediaQueryListValuePairs {
   return mediaQueryValuePairs.map(function createMediaQueryListValuePair(
     mediaQueryValuePair,
   ) {
@@ -70,9 +73,7 @@ function createMediaQueryListValuePairs(
  * @param {[MediaQueryList, string][]} mediaQueryListValuePairs
  * @returns {string}
  */
-function getValue(
-  mediaQueryListValuePairs: (readonly [MediaQueryList, string])[],
-) {
+function getValue(mediaQueryListValuePairs: MediaQueryListValuePairs): string {
   return mediaQueryListValuePairs.filter(
     function filterOutNonRelevantMediaQueryLists(mediaQueryListValuePair) {
       const mediaQueryList = mediaQueryListValuePair[0]
@@ -106,7 +107,7 @@ function useResponsiveValue(mediaExpression: string): string {
         mediaQueryValuePairs,
       )
 
-      function onMediaQueryStateChange() {
+      function onMediaQueryStateChange(): void {
         setStateValue(getValue(mediaQueryListValuePairs))
       }
 
@@ -117,7 +118,7 @@ function useResponsiveValue(mediaExpression: string): string {
         mediaQueryList.addListener(onMediaQueryStateChange)
       })
 
-      return function onUnMount() {
+      return function onUnMount(): void {
         mediaQueryListValuePairs.forEach(function removeListeners(
           mediaQueryListValuePair,
         ) {
@@ -126,6 +127,8 @@ function useResponsiveValue(mediaExpression: string): string {
         })
       }
     },
+    // https://github.com/facebook/react/issues/17366
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [mediaQueryValuePairs],
   )
 

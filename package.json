@@ -18,7 +18,7 @@
     "start": "tsdx watch",
     "build": "tsdx build",
     "test": "tsdx test --env=jsdom",
-    "lint": "tsdx lint",
+    "lint": "tsdx lint src test",
     "commit": "git-cz",
     "semantic-release": "semantic-release"
   },
@@ -27,7 +27,7 @@
   },
   "husky": {
     "hooks": {
-      "pre-commit": "tsdx lint"
+      "pre-commit": "npm run lint"
     }
   },
   "prettier": {
@@ -43,8 +43,19 @@
     "@types/jsdom": "12.2.4",
     "@types/react": "16.9.11",
     "@types/react-dom": "16.9.4",
+    "@typescript-eslint/eslint-plugin": "2.7.0",
+    "@typescript-eslint/parser": "2.7.0",
     "commitizen": "4.0.3",
     "cz-conventional-changelog": "^3.0.2",
+    "eslint-config-airbnb": "18.0.1",
+    "eslint-config-prettier": "6.6.0",
+    "eslint-import-resolver-typescript": "2.0.0",
+    "eslint-plugin-import": "2.18.2",
+    "eslint-plugin-import-helpers": "1.0.2",
+    "eslint-plugin-jsx-a11y": "6.2.3",
+    "eslint-plugin-prettier": "3.1.1",
+    "eslint-plugin-react": "7.16.0",
+    "eslint-plugin-react-hooks": "2.3.0",
     "husky": "3.0.9",
     "mq-polyfill": "1.1.8",
     "react": "16.12.0",
