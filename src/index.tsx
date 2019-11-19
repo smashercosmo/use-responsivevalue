@@ -17,7 +17,7 @@ type MediaQueryListValuePairs = (readonly [MediaQueryList, string])[]
 function sortMediaQueryValuePairs(
   mediaQueryValuePair1: string,
   mediaQueryValuePair2: string,
-): number {
+) {
   const mediaQuery1Match = mediaQueryValuePair1.match(WIDTH_REGEXP)
   const mediaQuery2Match = mediaQueryValuePair2.match(WIDTH_REGEXP)
   const width1 = mediaQuery1Match ? mediaQuery1Match[1] : 0
@@ -73,7 +73,7 @@ function createMediaQueryListValuePairs(
  * @param {[MediaQueryList, string][]} mediaQueryListValuePairs
  * @returns {string}
  */
-function getValue(mediaQueryListValuePairs: MediaQueryListValuePairs): string {
+function getValue(mediaQueryListValuePairs: MediaQueryListValuePairs) {
   return mediaQueryListValuePairs.filter(
     function filterOutNonRelevantMediaQueryLists(mediaQueryListValuePair) {
       const mediaQueryList = mediaQueryListValuePair[0]
@@ -88,7 +88,7 @@ function getValue(mediaQueryListValuePairs: MediaQueryListValuePairs): string {
  * @param {string} mediaExpression ( e.g. '(min-width: 480px) 2, (min-width: 720px) 3, 1' )
  * @returns {string}
  */
-function useResponsiveValue(mediaExpression: string): string {
+function useResponsiveValue(mediaExpression: string) {
   const mediaQueryValuePairs = useMemo(
     () => parseMediaExpression(mediaExpression),
     [mediaExpression],
@@ -107,7 +107,7 @@ function useResponsiveValue(mediaExpression: string): string {
         mediaQueryValuePairs,
       )
 
-      function onMediaQueryStateChange(): void {
+      function onMediaQueryStateChange() {
         setStateValue(getValue(mediaQueryListValuePairs))
       }
 
@@ -118,7 +118,7 @@ function useResponsiveValue(mediaExpression: string): string {
         mediaQueryList.addListener(onMediaQueryStateChange)
       })
 
-      return function onUnMount(): void {
+      return function onUnMount() {
         mediaQueryListValuePairs.forEach(function removeListeners(
           mediaQueryListValuePair,
         ) {

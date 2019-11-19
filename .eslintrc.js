@@ -25,6 +25,9 @@ module.exports = {
 
     // General rules
     "func-style": ["error", "declaration"],
+
+    // Typescript
+    "@typescript-eslint/explicit-function-return-type": "off"
   },
   "settings": {
     "import/resolver": {
