@@ -94,12 +94,9 @@ function useResponsiveValue(mediaExpression: string) {
     [mediaExpression],
   )
 
-  const state = useState(
+  const [value, setValue] = useState(
     getValue(createMediaQueryListValuePairs(mediaQueryValuePairs)),
   )
-
-  const stateValue = state[0]
-  const setStateValue = state[1]
 
   useEffect(
     function onMediaExpressionChange() {
@@ -108,7 +105,7 @@ function useResponsiveValue(mediaExpression: string) {
       )
 
       function onMediaQueryStateChange() {
-        setStateValue(getValue(mediaQueryListValuePairs))
+        setValue(getValue(mediaQueryListValuePairs))
       }
 
       mediaQueryListValuePairs.forEach(function addListeners(
@@ -127,12 +124,10 @@ function useResponsiveValue(mediaExpression: string) {
         })
       }
     },
-    // https://github.com/facebook/react/issues/17366
-    // eslint-disable-next-line react-hooks/exhaustive-deps
     [mediaQueryValuePairs],
   )
 
-  return stateValue
+  return value
 }
 
 export { useResponsiveValue }
