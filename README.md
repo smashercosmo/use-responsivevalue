@@ -5,6 +5,10 @@ It borrows its syntax from the ```<img />``` tag 'sizes' attribute.
 
 ## Usage
 
+```
+npm install use-responsivevalue --save-exact
+```
+
 ```js
 import React from 'react'
 import useResponsiveValue from 'use-responsivevalue'
