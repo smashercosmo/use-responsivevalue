@@ -63,7 +63,10 @@ function createMediaQueryListValuePairs<Value extends string = string>(
   ) {
     const mediaQuery = mediaQueryValuePair[0]
     const value = mediaQueryValuePair[1] as Value
-    const mediaQueryList = window.matchMedia(mediaQuery)
+    const mediaQueryList =
+      typeof window === 'undefined'
+        ? ({ matches: true, media: mediaQuery } as MediaQueryList)
+        : window.matchMedia(mediaQuery)
     return [mediaQueryList, value] as const
   })
 }
