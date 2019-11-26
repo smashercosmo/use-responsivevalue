@@ -3,7 +3,7 @@ import React from 'react'
 import { useResponsiveValue } from '../src'
 
 function App() {
-  const width = useResponsiveValue(
+  const width = useResponsiveValue<'480' | '720' | '1024' | '0'>(
     '(min-width: 480px) 480, (min-width: 720px) 720, (min-width: 1024px) 1024, 0',
   )
 

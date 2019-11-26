@@ -4,8 +4,8 @@ const WHITE_SPACE_REGEXP = /\s+/g
 const WIDTH_REGEXP = /(\d+)px/
 const MEDIA_QUERY_REGEXP = /^\((?:min|max)-width:\d+px\)/
 
-type MediaQueryValuePairs = (readonly [string, string])[]
-type MediaQueryListValuePairs = (readonly [MediaQueryList, string])[]
+type MediaQueryValuePairs<Value> = (readonly [string, Value])[]
+type MediaQueryListValuePairs<Value> = (readonly [MediaQueryList, Value])[]
 
 /**
  * Sorts mediaQueryValuePairs from largest to smallest
@@ -31,7 +31,9 @@ function sortMediaQueryValuePairs(
  * @param {string} mediaExpression ( e.g. '(min-width: 480px) 2, (min-width: 720px) 3, 1' )
  * @returns {[string, string][]} parsed expression ( e.g. [['(min-width: 480px)', '2'], ['(min-width: 720px)', '3'], ['all', '1']] )
  */
-function parseMediaExpression(mediaExpression: string): MediaQueryValuePairs {
+function parseMediaExpression<Value extends string = string>(
+  mediaExpression: string,
+): MediaQueryValuePairs<Value> {
   return mediaExpression
     .trim()
     .replace(WHITE_SPACE_REGEXP, '')
@@ -40,9 +42,9 @@ function parseMediaExpression(mediaExpression: string): MediaQueryValuePairs {
     .map(function createMediaQueryValuePair(mediaQueryValueString) {
       const mediaQueryMatch = mediaQueryValueString.match(MEDIA_QUERY_REGEXP)
       const mediaQuery = mediaQueryMatch ? mediaQueryMatch[0] : 'all'
-      const value = mediaQueryMatch
+      const value = (mediaQueryMatch
         ? mediaQueryValueString.substr(mediaQuery.length)
-        : mediaQueryValueString
+        : mediaQueryValueString) as Value
       return [mediaQuery, value] as const
     })
 }
@@ -53,14 +55,14 @@ function parseMediaExpression(mediaExpression: string): MediaQueryValuePairs {
  * @param {string} mediaQueryValuePairs ( e.g. [['(min-width: 480px)', '2'], ['(min-width: 720px)', '3'], ['all', '1']] )
  * @returns {[MediaQueryList, string][]}
  */
-function createMediaQueryListValuePairs(
-  mediaQueryValuePairs: MediaQueryValuePairs,
-): MediaQueryListValuePairs {
+function createMediaQueryListValuePairs<Value extends string = string>(
+  mediaQueryValuePairs: MediaQueryValuePairs<Value>,
+): MediaQueryListValuePairs<Value> {
   return mediaQueryValuePairs.map(function createMediaQueryListValuePair(
     mediaQueryValuePair,
   ) {
     const mediaQuery = mediaQueryValuePair[0]
-    const value = mediaQueryValuePair[1]
+    const value = mediaQueryValuePair[1] as Value
     const mediaQueryList = window.matchMedia(mediaQuery)
     return [mediaQueryList, value] as const
   })
@@ -73,7 +75,9 @@ function createMediaQueryListValuePairs(
  * @param {[MediaQueryList, string][]} mediaQueryListValuePairs
  * @returns {string}
  */
-function getValue(mediaQueryListValuePairs: MediaQueryListValuePairs) {
+function getValue<Value extends string = string>(
+  mediaQueryListValuePairs: MediaQueryListValuePairs<Value>,
+): Value {
   return mediaQueryListValuePairs.filter(
     function filterOutNonRelevantMediaQueryLists(mediaQueryListValuePair) {
       const mediaQueryList = mediaQueryListValuePair[0]
@@ -88,14 +92,18 @@ function getValue(mediaQueryListValuePairs: MediaQueryListValuePairs) {
  * @param {string} mediaExpression ( e.g. '(min-width: 480px) 2, (min-width: 720px) 3, 1' )
  * @returns {string}
  */
-function useResponsiveValue(mediaExpression: string) {
+function useResponsiveValue<Value extends string = string>(
+  mediaExpression: string,
+) {
   const mediaQueryValuePairs = useMemo(
-    () => parseMediaExpression(mediaExpression),
+    () => parseMediaExpression<Value>(mediaExpression),
     [mediaExpression],
   )
 
-  const [value, setValue] = useState(
-    getValue(createMediaQueryListValuePairs(mediaQueryValuePairs)),
+  const [value, setValue] = useState<Value>(
+    getValue<Value>(
+      createMediaQueryListValuePairs<Value>(mediaQueryValuePairs),
+    ),
   )
 
   useEffect(
@@ -105,7 +113,7 @@ function useResponsiveValue(mediaExpression: string) {
       )
 
       function onMediaQueryStateChange() {
-        setValue(getValue(mediaQueryListValuePairs))
+        setValue(getValue<Value>(mediaQueryListValuePairs))
       }
 
       mediaQueryListValuePairs.forEach(function addListeners(
