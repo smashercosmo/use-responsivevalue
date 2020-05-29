@@ -6,6 +6,10 @@ const MEDIA_QUERY_REGEXP = /^\((?:min|max)-width:\d+px\)/
 
 type MediaQueryValuePairs<Value> = (readonly [string, Value])[]
 type MediaQueryListValuePairs<Value> = (readonly [MediaQueryList, Value])[]
+type Options<Value> = {
+  initialValue?: Value
+  __dangerouslyForceInitialValue?: boolean
+}
 
 /**
  * Sorts mediaQueryValuePairs from largest to smallest
@@ -93,20 +97,47 @@ function getValue<Value extends string = string>(
  * React hook to deal with responsive values
  *
  * @param {string} mediaExpression ( e.g. '(min-width: 480px) 2, (min-width: 720px) 3, 1' )
+ * @param {object} options
+ * @param {string} options.initialValue
+ * @param {boolean} options.__dangerouslyForceInitialValue for testing only
  * @returns {string}
  */
 function useResponsiveValue<Value extends string = string>(
   mediaExpression: string,
+  options?: Options<Value>,
 ) {
+  const { initialValue, __dangerouslyForceInitialValue } = options || {}
   const mediaQueryValuePairs = useMemo(
     () => parseMediaExpression<Value>(mediaExpression),
     [mediaExpression],
   )
 
-  const [value, setValue] = useState<Value>(
-    getValue<Value>(
+  const [value, setValue] = useState<Value>(() => {
+    if (
+      (typeof window === 'undefined' || __dangerouslyForceInitialValue) &&
+      typeof initialValue !== 'undefined'
+    ) {
+      return initialValue
+    }
+    return getValue<Value>(
       createMediaQueryListValuePairs<Value>(mediaQueryValuePairs),
-    ),
+    )
+  })
+
+  /**
+   * Second render pass to prevent markup mismatch
+   * in case of SSR
+   */
+  useEffect(
+    function onMount() {
+      const valueOnMount = getValue<Value>(
+        createMediaQueryListValuePairs<Value>(mediaQueryValuePairs),
+      )
+      if (typeof initialValue === 'string' && valueOnMount !== initialValue) {
+        setValue(valueOnMount)
+      }
+    },
+    [initialValue, mediaQueryValuePairs],
   )
 
   useEffect(

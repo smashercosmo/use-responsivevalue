@@ -1,3 +1,5 @@
+import React from 'react'
+import { render as hydrate } from '@testing-library/react'
 import { renderHook, act } from '@testing-library/react-hooks'
 import matchMediaPolyfill from 'mq-polyfill'
 
@@ -89,4 +91,23 @@ it('should be error tolerant', () => {
   expect(result.current).toBe('2')
   resize(320)
   expect(result.current).toBe('(min-width:720)3')
+})
+
+it('should return correct value on the client in case of server/client markup mismatch', () => {
+  const initialValue = '2'
+  function Component() {
+    const value = useResponsiveValue(
+      '(min-width: 480px) 2, (min-width: 720px) 3, (min-width: 1024px) 4, 1',
+      { initialValue, __dangerouslyForceInitialValue: true },
+    )
+    return <>{value}</>
+  }
+  const span = document.createElement('span')
+  span.appendChild(document.createTextNode(initialValue))
+  resize(720)
+  const { container } = hydrate(<Component />, {
+    hydrate: true,
+    container: document.body.appendChild(span),
+  })
+  expect(container.firstChild).toMatchInlineSnapshot('3')
 })
